@@ -22,7 +22,7 @@ void print_the_report(string file_path, int quantity, double mean, double vol, s
     cout << "Daily volatility is " << vol*100 << "%\n\n";
 
     cout << "Annual return is " << mean*252*100 << "%\n";
-    cout << "Annual volatility is " << vol*252*100 << "%\n\n";
+    cout << "Annual volatility is " << vol*sqrt(252)*100 << "%\n\n";
 
     cout << "The best day was " << best_day << " with the return of " << max_return*100 << "%\n";
     cout << "The worst day was " << worst_day << " with the return of " << min_return*100 << "%\n\n";
@@ -44,7 +44,7 @@ int load_prices_csv(const string& file_path, vector<string>& dates, vector<doubl
     ifstream file(file_path); // Opens the file with the financial data
 
     if (!file.is_open()) { 
-        cout << "Error: could not open" << file_path << "\n"; // File failed to open, outputs the error
+        cout << "Error: could not open " << file_path << "\n"; // File failed to open, outputs the error
         return 0;
     }
     string line;
@@ -86,12 +86,17 @@ double find_max_price(const vector<double>& prices, const vector<string> &dates,
     return max_price;
 }
 
-double find_max_drawdon(const vector<double>& prices, const vector<string>& dates, double max_price, string& trough_date) {
+double find_max_drawdown(const vector<double>& prices, const vector<string>& dates, string& trough_date) {
+    double running_peak = prices[0];   // highest price seen so far
     double max_drawdown = 0;
-    
+
     for (int i = 0; i < prices.size(); ++i) {
-        if (prices[i]/max_price - 1 < max_drawdown) {
-            max_drawdown =  prices[i]/max_price - 1;
+        if (prices[i] > running_peak) {
+            running_peak = prices[i];
+        }
+        double drawdown = prices[i]/running_peak - 1;   // fall from the peak *before* today
+        if (drawdown < max_drawdown) {
+            max_drawdown = drawdown;
             trough_date = dates[i];
         }
     }
@@ -161,7 +166,7 @@ void find_vol_20d(vector<double>& vol_20d, const vector<double>& returns) {
     for (int i = 0; i < vol_20d.size(); ++i) {
         if (max_20d_vol < vol_20d[i]) {
             max_20d_vol = vol_20d[i];
-            max_20d_vol_date = dates[i+19];
+            max_20d_vol_date = dates[i+20];   // window ends on return i+19, which is dated dates[i+20]
         }
     }
  }

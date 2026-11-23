@@ -25,13 +25,13 @@ int main(int argc, char* argv[]) {
 
     int quantity = load_prices_csv(file_path, dates, prices);
 
-    double max_price = find_max_price(prices, dates, peak_date);
-    double max_drawdown = find_max_drawdon(prices, dates, max_price, trough_date);
-
     if (prices.size() < 2) {
-        cout << "Not enough data for further calculations";
+        cout << "Not enough data for further calculations\n";
         return 1;
     }
+
+    double max_price = find_max_price(prices, dates, peak_date);
+    double max_drawdown = find_max_drawdown(prices, dates, trough_date);
 
     vector<double> returns;
     string best_day, worst_day;

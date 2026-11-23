@@ -14,8 +14,7 @@ int load_prices_csv(const string& file_path, vector<string>& dates, vector<doubl
 
 double find_max_price(const vector<double>& prices, const vector<string>& dates, string& peak_date);
 
-double find_max_drawdon(const vector<double>& prices, const vector<string>& dates, double max_price,
-    string& trough_date);
+double find_max_drawdown(const vector<double>& prices, const vector<string>& dates, string& trough_date);
 
 void compute_returns(vector<double>& returns, const vector<double>& prices, const vector<string>& dates, 
     double& max_return, string& best_day, double& min_return, string& worst_day);
